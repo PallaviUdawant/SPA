@@ -2,6 +2,7 @@ package org.mdcconcepts.androidapp.spa;
 
 import java.util.ArrayList;
 
+import org.mdcconcepts.androidapp.spa.findspa.FindSpaFragment;
 import org.mdcconcepts.androidapp.spa.giftcard.GiftCardFragment;
 import org.mdcconcepts.androidapp.spa.makeappointment.MakeAppointmentFragment;
 import org.mdcconcepts.androidapp.spa.navigation.NavDrawerItem;
@@ -190,7 +191,7 @@ public class MainActivity extends Activity {
 			fragment = new ProfileFragment();
 			break;
 		case 2:
-			// fragment = new PhotosFragment();
+			 fragment = new FindSpaFragment();
 			break;
 		case 3:
 			fragment = new MakeAppointmentFragment();
