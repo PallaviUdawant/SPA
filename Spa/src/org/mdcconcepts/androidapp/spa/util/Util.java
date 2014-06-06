@@ -11,6 +11,10 @@ public class Util {
 	 * This is Login Up User Webservice URL.
 	 */
 	public static final String Login_URL = "http://mdcspa.mdcconcepts.com/login.php";
+	/**
+	 * This is NearestSpa Webservice URL.
+	 */
+	public static final String NearestSpa_URL = "http://mdcspa.mdcconcepts.com/get-top-ten-spa-for-map.php";
 
 	/**
 	 * This is Make an Appointment User Webservice URL.

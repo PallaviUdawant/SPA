@@ -1,6 +1,7 @@
 package org.mdcconcepts.androidapp.spa.login;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -20,6 +21,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,12 +43,13 @@ public class LoginActivity extends Activity {
 
 	EditText Username;
 	EditText Password;
-
+	Editor editor ;
 	Button Login_ButtonController;
 	Button GoToCreateAccount_ButtonController;
 
 	// flag for Internet connection status
 	Boolean isInternetPresent = false;
+	SharedPreferences pref;
 
 	// Connection detector class
 	ConnectionDetector cd;
@@ -57,6 +61,16 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
+		pref=getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+		editor = pref.edit();
+		if(pref.getBoolean("Login_Status", false))
+		{
+			Intent i= new Intent(LoginActivity.this,MainActivity.class);
+			startActivity(i);
+			finish();
+			
+		}
+		
 		// creating connection detector class instance
 		cd = new ConnectionDetector(getApplicationContext());
 
@@ -188,6 +202,8 @@ public class LoginActivity extends Activity {
 				Toast.makeText(LoginActivity.this, file_url, Toast.LENGTH_LONG)
 						.show();
 				if (success == 1) {
+					editor.putBoolean("Login_Status", true);
+					editor.commit();
 					Intent myIntent = new Intent(LoginActivity.this,
 							MainActivity.class);
 					finish();
