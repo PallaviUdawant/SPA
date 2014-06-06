@@ -1,5 +1,6 @@
 package org.mdcconcepts.androidapp.spa.findspa;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -51,6 +53,8 @@ public class FindSpaFragment extends Fragment implements
 	private static View rootView;
 	Activity rootActivity;
 	GPSTracker gps;
+	TextView txt_spa_name;
+	TextView txt_addr;
 
 	private double mLastLatitude;
 	private double mLastLongitude;
@@ -83,7 +87,7 @@ public class FindSpaFragment extends Fragment implements
 			}
 
 		}
-
+		gps = new GPSTracker(getActivity());
 		try {
 			rootActivity = getActivity();
 
@@ -105,28 +109,29 @@ public class FindSpaFragment extends Fragment implements
 	@SuppressLint("NewApi")
 	private void initilizeMap() {
 		if (google_map == null) {
-			Fragment fragment = (getFragmentManager()
-					.findFragmentById(R.id.map));
-			if (fragment != null) {
-				
-				FragmentTransaction ft = getActivity().getFragmentManager()
-						.beginTransaction();
-				// fragment= new FindSpaFragment();
-				// ft.add(R.id.map, fragment);
-				// ft.replace(R.id.map, sp);
-				// ft.commit();
-				Toast.makeText(rootActivity, "fragment not null",
-						Toast.LENGTH_LONG).show();
-				// ft.remove(fragment);
-				// ft.commit();}
-			} else {
-				Toast.makeText(rootActivity, "fragment is null",
-						Toast.LENGTH_LONG).show();
-			}
+			// Fragment fragment = (getFragmentManager()
+			// .findFragmentById(R.id.map));
+			// if (fragment != null) {
+			//
+			// // FragmentTransaction ft = getActivity().getFragmentManager()
+			// // .beginTransaction();
+			// // // fragment= new FindSpaFragment();
+			// // // ft.add(R.id.map, fragment);
+			// // // ft.replace(R.id.map, sp);
+			// // // ft.commit();
+			// // Toast.makeText(rootActivity, "fragment not null",
+			// // Toast.LENGTH_LONG).show();
+			// // ft.remove(fragment);
+			// // ft.commit();}
+			// } else {
+			// Toast.makeText(rootActivity, "fragment is null",
+			// Toast.LENGTH_LONG).show();
+			// }
 			try {
 				google_map = ((MapFragment) this.getActivity()
 						.getFragmentManager().findFragmentById(R.id.map))
 						.getMap();
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -138,8 +143,6 @@ public class FindSpaFragment extends Fragment implements
 						.show();
 			} else {
 
-				gps = new GPSTracker(getActivity());
-
 				// check if GPS enabled
 				if (gps.canGetLocation()) {
 
@@ -147,11 +150,11 @@ public class FindSpaFragment extends Fragment implements
 					mLastLongitude = gps.getLongitude();
 
 					// \n is for new line
-					Toast.makeText(
-							getActivity(),
-							"Your Location is - \nLat: " + mLastLatitude
-									+ "\nLong: " + mLastLongitude, Toast.LENGTH_LONG)
-							.show();
+					// Toast.makeText(
+					// getActivity(),
+					// "Your Location is - \nLat: " + mLastLatitude
+					// + "\nLong: " + mLastLongitude, Toast.LENGTH_LONG)
+					// .show();
 					Log.d("latitude", "" + mLastLatitude);
 					Log.d("longitude", "" + mLastLongitude);
 
@@ -161,7 +164,7 @@ public class FindSpaFragment extends Fragment implements
 					// Ask user to enable GPS/network in settings
 					gps.showSettingsAlert();
 				}
-				// google_map.setMyLocationEnabled(true);
+				google_map.setMyLocationEnabled(true);
 				// getLocation();
 
 				marker = new MarkerOptions().position(
@@ -187,36 +190,11 @@ public class FindSpaFragment extends Fragment implements
 					downloadTask.execute(url);
 
 				}
-				// options.position(WALL_STREET);
-				// options.position(STREET1);
-				// options.position(STREET2);
-				// options.position(STREET3);
-
-				// google_map.addMarker(options);
-				// String url = getMapsApiDirectionsUrl(new
-				// LatLng(mLastLatitude,
-				// mLastLongitude), WALL_STREET);
-				// ReadTask downloadTask = new ReadTask();
-				// downloadTask.execute(url);
-				//
-				// url = getMapsApiDirectionsUrl(new LatLng(mLastLatitude,
-				// mLastLongitude), STREET1);
-				// downloadTask = new ReadTask();
-				// downloadTask.execute(url);
-				//
-				// url = getMapsApiDirectionsUrl(new LatLng(mLastLatitude,
-				// mLastLongitude), STREET2);
-				// downloadTask = new ReadTask();
-				// downloadTask.execute(url);
-				//
-				// url = getMapsApiDirectionsUrl(new LatLng(mLastLatitude,
-				// mLastLongitude), STREET3);
-				// downloadTask = new ReadTask();
-				// downloadTask.execute(url);
 
 				/*** ZoomIn ****/
 				google_map.animateCamera(CameraUpdateFactory.newLatLngZoom(
 						new LatLng(mLastLatitude, mLastLongitude), 15));
+
 				google_map.setInfoWindowAdapter(new InfoWindowAdapter() {
 
 					@Override
@@ -226,10 +204,34 @@ public class FindSpaFragment extends Fragment implements
 					}
 
 					@Override
-					public View getInfoContents(Marker arg0) {
+					public View getInfoContents(Marker marker) {
 						// TODO Auto-generated method stub
 						View v = rootActivity.getLayoutInflater().inflate(
 								R.layout.custom_info_window, null);
+
+						txt_spa_name = (TextView) v
+								.findViewById(R.id.txt_spa_name);
+						txt_addr = (TextView) v.findViewById(R.id.txt_address);
+
+						double search_lat, search_long;
+						search_lat = marker.getPosition().latitude;
+						search_long = marker.getPosition().longitude;
+
+						// search_lat=Math.round(search_lat,6);
+						// search_long=Math.round(search_long ,6);
+						DecimalFormat df = new DecimalFormat("#.000000");
+						search_lat = Double.parseDouble(df.format(search_lat));
+						search_long = Double.parseDouble(df.format(search_long));
+
+						Spa_Data spa_data = searchDetails(search_lat,
+								search_long);
+
+						txt_spa_name.setText(spa_data.Spa_Name);
+						txt_addr.setText(spa_data.Spa_Address);
+
+						Log.d("Spa Address", spa_data.Spa_Address);
+						// Log.d("Marker Id",marker.getPosition().toString());
+
 						return v;
 					}
 				});
@@ -246,74 +248,103 @@ public class FindSpaFragment extends Fragment implements
 				// marker.showInfoWindow();
 				// }
 				// });
+
 				addMarkers();
+
 			}
 
 		}
 	}
 
-	public void getLocation() {
-		try {
-			LocationManager locationManager = (LocationManager) context
-					.getSystemService(getActivity().LOCATION_SERVICE);
+	public Spa_Data searchDetails(double searchLat, double searchLong) {
+		ArrayList<Spa_Data> data = new ArrayList<Spa_Data>();
+		double l1, l2;
+		for (int i = 0; i < NearestLocations.size(); i++) {
+			l1 = Double.parseDouble(NearestLocations.get(i).Spa_Lat);
+			l2 = Double.parseDouble(NearestLocations.get(i).Spa_Long);
 
-			// getting GPS status
-			boolean isGPSEnabled = locationManager
-					.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			if (l1 == searchLat && l2 == searchLong) {
 
-			// getting network status
-			boolean isNetworkEnabled = locationManager
-					.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+				Log.d("l1",
+						NearestLocations.get(i).Spa_Lat + " "
+								+ String.valueOf(searchLat));
+				Log.d("l2",
+						NearestLocations.get(i).Spa_Long + " "
+								+ String.valueOf(searchLong));
 
-			if (!isGPSEnabled && !isNetworkEnabled) {
-				// no network provider is enabled
-			} else {
-				// this.canGetLocation = true;
-				// First get location from Network Provider
-				if (isNetworkEnabled) {
-					locationManager.requestLocationUpdates(
-							LocationManager.NETWORK_PROVIDER, 1000 * 60 * 1,
-							10, this);
-					Log.d("Network", "Network");
-					if (locationManager != null) {
-						location = locationManager
-								.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-						if (location != null) {
-							mLastLatitude = location.getLatitude();
-							mLastLongitude = location.getLongitude();
-							Log.v("latitude", String.valueOf(latitude));
-							Log.v("Longitude", String.valueOf(longitude));
-						}
+				Log.d("l2", NearestLocations.get(i).Spa_Name + " "
+						+ NearestLocations.get(i).Spa_Address);
 
-					}
-				}
-				// / if GPS Enabled get lat/long using GPS Services
-				if (isGPSEnabled) {
-					if (location == null) {
-						locationManager.requestLocationUpdates(
-								LocationManager.GPS_PROVIDER, 1000 * 60 * 1,
-								10, this);
-						// Log.d("GPS Enabled", "GPS Enabled");
-						if (locationManager != null) {
-							location = locationManager
-									.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-							if (location != null) {
-								latitude = location.getLatitude();
-								longitude = location.getLongitude();
-								Log.v("latitude", String.valueOf(latitude));
-								Log.v("Longitude", String.valueOf(longitude));
-
-							}
-						}
-					}
-				}
+				return NearestLocations.get(i);
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+		return null;
 
 	}
+
+	// public void getLocation() {
+	// try {
+	// LocationManager locationManager = (LocationManager) context
+	// .getSystemService(getActivity().LOCATION_SERVICE);
+	//
+	// // getting GPS status
+	// boolean isGPSEnabled = locationManager
+	// .isProviderEnabled(LocationManager.GPS_PROVIDER);
+	//
+	// // getting network status
+	// boolean isNetworkEnabled = locationManager
+	// .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+	//
+	// if (!isGPSEnabled && !isNetworkEnabled) {
+	// // no network provider is enabled
+	// } else {
+	// // this.canGetLocation = true;
+	// // First get location from Network Provider
+	// if (isNetworkEnabled) {
+	// locationManager.requestLocationUpdates(
+	// LocationManager.NETWORK_PROVIDER, 1000 * 60 * 1,
+	// 10, this);
+	// Log.d("Network", "Network");
+	// if (locationManager != null) {
+	// location = locationManager
+	// .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+	// if (location != null) {
+	// mLastLatitude = location.getLatitude();
+	// mLastLongitude = location.getLongitude();
+	// Log.v("latitude", String.valueOf(latitude));
+	// Log.v("Longitude", String.valueOf(longitude));
+	// }
+	//
+	// }
+	// }
+	// // / if GPS Enabled get lat/long using GPS Services
+	// if (isGPSEnabled) {
+	// if (location == null) {
+	// locationManager.requestLocationUpdates(
+	// LocationManager.GPS_PROVIDER, 1000 * 60 * 1,
+	// 10, this);
+	// // Log.d("GPS Enabled", "GPS Enabled");
+	// if (locationManager != null) {
+	// location = locationManager
+	// .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	// if (location != null) {
+	// latitude = location.getLatitude();
+	// longitude = location.getLongitude();
+	// Log.v("latitude", String.valueOf(latitude));
+	// Log.v("Longitude", String.valueOf(longitude));
+	//
+	// }
+	// }
+	// }
+	// }
+	// }
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	//
+	// }
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -349,9 +380,9 @@ public class FindSpaFragment extends Fragment implements
 
 	private void addMarkers() {
 		if (google_map != null) {
-			google_map.addMarker(new MarkerOptions().position(
-					new LatLng(mLastLatitude, mLastLongitude)).title(
-					"Current Location"));
+//			google_map.addMarker(new MarkerOptions().position(
+//					new LatLng(mLastLatitude, mLastLongitude)).title(
+//					"Current Location"));
 			LatLng newLatLong;
 			double newLat, newLong;
 			for (int i = 0; i < NearestLocations.size(); i++) {
@@ -359,17 +390,9 @@ public class FindSpaFragment extends Fragment implements
 				newLong = Double.parseDouble(NearestLocations.get(i).Spa_Long);
 				newLatLong = new LatLng(newLat, newLong);
 				google_map.addMarker(new MarkerOptions().position(newLatLong));
-				// options.position(newLatLong);
 
 			}
-			// google_map.addMarker(new MarkerOptions().position(WALL_STREET)
-			// .title("First Point"));
-			// google_map.addMarker(new MarkerOptions().position(STREET1).title(
-			// "Second Point"));
-			// google_map.addMarker(new MarkerOptions().position(STREET2).title(
-			// "Second Point"));
-			// google_map.addMarker(new MarkerOptions().position(STREET3).title(
-			// "Second Point"));
+
 		}
 	}
 
@@ -393,32 +416,11 @@ public class FindSpaFragment extends Fragment implements
 		}
 	}
 
-	// public void onDestroyView()
-	// {
-	// super.onDestroyView();
-	// Fragment fragment = (getFragmentManager().findFragmentById(R.id.map));
-	// if(fragment!=null)
-	// {
-	// FragmentTransaction ft =
-	// getActivity().getFragmentManager().beginTransaction();
-	// ft.remove(fragment);
-	// ft.commit();}
-	// }
-	
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		google_map.clear();
-	}
-	@Override
-	public void onPause() {
-		super.onPause();
-		// google_map=((MapFragment)
-		// this.getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
-		// if(google_map != null)
-		// google_map = null;
-
 	}
 
 	private class ParserTask extends
@@ -461,8 +463,8 @@ public class FindSpaFragment extends Fragment implements
 				}
 
 				polyLineOptions.addAll(points);
-				polyLineOptions.width(4);
-
+				polyLineOptions.width(5);
+				polyLineOptions.color(Color.BLUE);
 				switch (count) {
 				case 0:
 					polyLineOptions.color(Color.BLUE);
@@ -520,6 +522,24 @@ public class FindSpaFragment extends Fragment implements
 				// Building Parameters
 				List<NameValuePair> params1 = new ArrayList<NameValuePair>();
 
+				// check if GPS enabled
+				if (gps.canGetLocation()) {
+
+					mLastLatitude = gps.getLatitude();
+					mLastLongitude = gps.getLongitude();
+
+					// \n is for new line
+					// Toast.makeText(
+					// getActivity(),
+					// "Your Location is - \nLat: " + mLastLatitude
+					// + "\nLong: " + mLastLongitude, Toast.LENGTH_LONG)
+					// .show();
+					// Log.d("latitude", "" + mLastLatitude);
+					// Log.d("longitude", "" + mLastLongitude);
+
+				}
+				Log.d("Sending Lat", String.valueOf(mLastLatitude));
+				Log.d("Sending Long", String.valueOf(mLastLongitude));
 				params1.add(new BasicNameValuePair("CurrentLat", String
 						.valueOf(mLastLatitude)));
 				params1.add(new BasicNameValuePair("CurrentLong", String
@@ -545,17 +565,24 @@ public class FindSpaFragment extends Fragment implements
 
 						JSONObject Temp = PostJson.getJSONObject(i);
 						// NearestLocations= new ArrayList<Spa_Data> ();
+
+						String addr = Temp.getString("Addresss");
+						Log.d("data", addr);
+
 						NearestLocations.add(new Spa_Data(Temp
 								.getString("Spa_Name"), Temp
 								.getString("Spa_Id"),
 								Temp.getString("Spa_Lat"), Temp
-										.getString("Spa_long"), Temp
-										.getString("Addresss")));
-						Log.d("data", Temp.getString("Spa_Name"));
-						Log.d("data", Temp.getString("Spa_Id"));
-						Log.d("data", Temp.getString("Spa_Lat"));
-						Log.d("data", Temp.getString("Spa_long"));
-						Log.d("data", Temp.getString("Addresss"));
+										.getString("Spa_long"), addr));
+						Log.d("address", NearestLocations.get(i).Spa_Address);
+
+						/*
+						 * Log.d("data", Temp.getString("Spa_Name"));
+						 * Log.d("data", Temp.getString("Spa_Id"));
+						 * Log.d("data", Temp.getString("Spa_Lat"));
+						 * Log.d("data", Temp.getString("Spa_long"));
+						 * Log.d("data", Temp.getString("Addresss"));
+						 */
 					}
 
 					return json.getString(TAG_MESSAGE);
@@ -564,7 +591,6 @@ public class FindSpaFragment extends Fragment implements
 					return json.getString(TAG_MESSAGE);
 
 				}
-				// WALL_STREET.latitude=json.getDouble("Spa_Lat");
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -580,16 +606,6 @@ public class FindSpaFragment extends Fragment implements
 			// dismiss the dialog once product deleted
 			pDialog.dismiss();
 			initilizeMap();
-			// if (file_url != null) {
-			// Toast.makeText(LoginActivity.this, file_url, Toast.LENGTH_LONG)
-			// .show();
-			// if (success == 1) {
-			// Intent myIntent = new Intent(LoginActivity.this,
-			// MainActivity.class);
-			// finish();
-			// startActivity(myIntent);
-			// }
-			// }
 
 		}
 
