@@ -23,7 +23,7 @@
                 android:weightSum="4" >
 
                 <TextView
-                    android:id="@+id/TextView02"
+                    android:id="@+id/txt_spa_details_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -55,7 +55,7 @@
                     android:text="Select Therapy" />
 
                 <Spinner
-                    android:id="@+id/SpinnerController_TherapyList"
+                    android:id="@+id/SpinnerController_TherapyList_SpaDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.2" />
@@ -79,7 +79,7 @@
                     android:text="Select Time For Service" />
 
                 <Spinner
-                    android:id="@+id/SpinnerController_TimeForServicelist"
+                    android:id="@+id/SpinnerController_TimeForServicelist_SpaDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.2" />
@@ -102,7 +102,7 @@
                     android:text="Price " />
 
                 <TextView
-                    android:id="@+id/TextViewController_Price"
+                    android:id="@+id/TextViewController_Price_Spa_Details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -127,7 +127,7 @@
                     android:text="Date" />
 
                 <TextView
-                    android:id="@+id/AppointmentDate_TextViewController"
+                    android:id="@+id/AppointmentDate_TextViewController_Spa_Details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -136,7 +136,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <Button
-                    android:id="@+id/Date_ButtonController"
+                    android:id="@+id/Date_ButtonController_Spa_Details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -163,7 +163,7 @@
                     android:text="Time" />
 
                 <TextView
-                    android:id="@+id/AppointmentTime_TextViewController"
+                    android:id="@+id/AppointmentTime_TextViewController_Spa_Details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -171,7 +171,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <Button
-                    android:id="@+id/Time_ButtonController"
+                    android:id="@+id/Time_ButtonController_Spa_Details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -195,7 +195,7 @@
                     android:text="Therapist" />
 
                 <TextView
-                    android:id="@+id/TextViewController_YourTherapist"
+                    android:id="@+id/TextViewController_YourTherapist_Spa_Details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"
@@ -203,7 +203,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <Button
-                    android:id="@+id/ButtonController_ChooseTherapist"
+                    android:id="@+id/ButtonController_ChooseTherapist_Spa_Details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.5"

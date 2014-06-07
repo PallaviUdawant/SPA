@@ -20,6 +20,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -28,13 +29,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -42,7 +46,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 public class FindSpaFragment extends Fragment implements
-		android.location.LocationListener {
+		android.location.LocationListener, OnInfoWindowClickListener {
 	public GoogleMap google_map;
 	LocationManager location_manager;
 	Location location;
@@ -55,6 +59,7 @@ public class FindSpaFragment extends Fragment implements
 	GPSTracker gps;
 	TextView txt_spa_name;
 	TextView txt_addr;
+	Spa_Data spa_data;
 
 	private double mLastLatitude;
 	private double mLastLongitude;
@@ -173,9 +178,9 @@ public class FindSpaFragment extends Fragment implements
 
 				MarkerOptions options = new MarkerOptions();
 				options.position(new LatLng(mLastLatitude, mLastLongitude));
-				LatLng newLatLong;
-				double newLat, newLong;
-				for (int i = 0; i < NearestLocations.size(); i++) {
+				
+				
+				/*for (int i = 0; i < NearestLocations.size(); i++) {
 					newLat = Double
 							.parseDouble(NearestLocations.get(i).Spa_Lat);
 					newLong = Double
@@ -189,8 +194,9 @@ public class FindSpaFragment extends Fragment implements
 					ReadTask downloadTask = new ReadTask();
 					downloadTask.execute(url);
 
-				}
+				}*/
 
+				google_map.setOnInfoWindowClickListener(this);
 				/*** ZoomIn ****/
 				google_map.animateCamera(CameraUpdateFactory.newLatLngZoom(
 						new LatLng(mLastLatitude, mLastLongitude), 15));
@@ -203,8 +209,10 @@ public class FindSpaFragment extends Fragment implements
 						return null;
 					}
 
+					
 					@Override
-					public View getInfoContents(Marker marker) {
+					public View getInfoContents(Marker marker)
+					{
 						// TODO Auto-generated method stub
 						View v = rootActivity.getLayoutInflater().inflate(
 								R.layout.custom_info_window, null);
@@ -213,6 +221,17 @@ public class FindSpaFragment extends Fragment implements
 								.findViewById(R.id.txt_spa_name);
 						txt_addr = (TextView) v.findViewById(R.id.txt_address);
 
+						LinearLayout ll=(LinearLayout)v.findViewById(R.id.custom_LinearLayout);
+						
+//						ll.setOnClickListener(new View.OnClickListener() {
+//							
+//							@Override
+//							public void onClick(View v) {
+//								// TODO Auto-generated method stub
+//								Toast.makeText(getActivity(), "Onclick", Toast.LENGTH_LONG).show();
+//							}
+//						});
+//						
 						double search_lat, search_long;
 						search_lat = marker.getPosition().latitude;
 						search_long = marker.getPosition().longitude;
@@ -223,15 +242,45 @@ public class FindSpaFragment extends Fragment implements
 						search_lat = Double.parseDouble(df.format(search_lat));
 						search_long = Double.parseDouble(df.format(search_long));
 
-						Spa_Data spa_data = searchDetails(search_lat,
+						spa_data = searchDetails(search_lat,
 								search_long);
 
 						txt_spa_name.setText(spa_data.Spa_Name);
 						txt_addr.setText(spa_data.Spa_Address);
 
 						Log.d("Spa Address", spa_data.Spa_Address);
+						LatLng newLatLong;
+						double newLat, newLong;
+						newLat = Double
+								.parseDouble(spa_data.Spa_Lat);
+						newLong = Double
+								.parseDouble(spa_data.Spa_Long);
+						newLatLong = new LatLng(newLat, newLong);
+
+						// options.position(newLatLong);
+
+						String url = getMapsApiDirectionsUrl(new LatLng(
+								mLastLatitude, mLastLongitude), newLatLong);
+						ReadTask downloadTask = new ReadTask();
+						downloadTask.execute(url);
+						
 						// Log.d("Marker Id",marker.getPosition().toString());
 
+						
+						v.setOnClickListener(new View.OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								
+								/*Intent i=new Intent(getActivity(),Spa_Details_Activity.class);
+								i.putExtra("Spa_Name", spa_data.Spa_Name);
+								i.putExtra("Spa_Id", spa_data.Spa_Id);
+								startActivity(i);*/
+								
+							
+							}
+						});
 						return v;
 					}
 				});
@@ -255,7 +304,7 @@ public class FindSpaFragment extends Fragment implements
 
 		}
 	}
-
+	 
 	public Spa_Data searchDetails(double searchLat, double searchLong) {
 		ArrayList<Spa_Data> data = new ArrayList<Spa_Data>();
 		double l1, l2;
@@ -486,7 +535,7 @@ public class FindSpaFragment extends Fragment implements
 				}
 
 			}
-			// google_map.addPolyline(polyLineOptions);
+			 google_map.addPolyline(polyLineOptions);
 		}
 	}
 
@@ -609,6 +658,18 @@ public class FindSpaFragment extends Fragment implements
 
 		}
 
+	}
+
+	@Override
+	public void onInfoWindowClick(Marker arg0)
+	{
+		// TODO Auto-generated method stub
+//		Toast.makeText(getActivity(), "Onclick", Toast.LENGTH_LONG).show();
+		Intent i=new Intent(getActivity(),Spa_Details_Activity.class);
+		i.putExtra("Spa_Name", spa_data.Spa_Name);
+		i.putExtra("Spa_Id", spa_data.Spa_Id);
+		startActivity(i);
+		
 	}
 
 }

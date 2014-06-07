@@ -2,6 +2,7 @@ package org.mdcconcepts.androidapp.spa;
 
 import java.util.ArrayList;
 
+import org.mdcconcepts.androidapp.spa.customitems.GPSTracker;
 import org.mdcconcepts.androidapp.spa.findspa.FindSpaFragment;
 import org.mdcconcepts.androidapp.spa.giftcard.GiftCardFragment;
 import org.mdcconcepts.androidapp.spa.makeappointment.MakeAppointmentFragment;
@@ -191,7 +192,20 @@ public class MainActivity extends Activity {
 			fragment = new ProfileFragment();
 			break;
 		case 2:
-			 fragment = new FindSpaFragment();
+			
+
+			GPSTracker gps=new GPSTracker(this);
+			
+			if (gps.canGetLocation()) {
+				 fragment = new FindSpaFragment();
+				
+			} else {
+				// can't get location
+				// GPS or Network is not enabled
+				// Ask user to enable GPS/network in settings
+				gps.showSettingsAlert();
+			}
+			
 			break;
 		case 3:
 			fragment = new MakeAppointmentFragment();

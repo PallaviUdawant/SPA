@@ -63,6 +63,10 @@
             android:name="org.mdcconcepts.androidapp.spa.MainActivity"
             android:label="@string/app_name" >
         </activity>
+         <activity
+            android:name="org.mdcconcepts.androidapp.spa.findspa.Spa_Details_Activity"
+            android:label="@string/app_name" >
+        </activity>
         <activity
             android:name="org.mdcconcepts.androidapp.spa.makeappointment.SetTherapistActivity"
             android:label="@string/title_activity_set_therapist"
@@ -84,6 +88,10 @@
         </activity>
         <activity
             android:name="org.mdcconcepts.androidapp.spa.makeappointment.SendFeedbackActivity"
+            android:label="@string/title_activity_send_feedback" >
+        </activity>
+        <activity
+            android:name="org.mdcconcepts.androidapp.spa.findspa.Spa_Profile"
             android:label="@string/title_activity_send_feedback" >
         </activity>
         <meta-data

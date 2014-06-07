@@ -105,25 +105,26 @@ public class MakeAppointmentFragment extends Fragment {
 		SpinnerController_SpaList = (Spinner) rootView
 				.findViewById(R.id.SpinnerController_SpaList);
 		SpinnerController_TherapyList = (Spinner) rootView
-				.findViewById(R.id.SpinnerController_TherapyList);
+				.findViewById(R.id.SpinnerController_TherapyList_SpaDetails);
 		SpinnerController_TimeForServicelist = (Spinner) rootView
-				.findViewById(R.id.SpinnerController_TimeForServicelist);
+				.findViewById(R.id.SpinnerController_TimeForServicelist_SpaDetails);
 		TextViewController_Price = (TextView) rootView
-				.findViewById(R.id.TextViewController_Price);
+				.findViewById(R.id.TextViewController_Price_Spa_Details);
 		TextViewController_YourTherapist = (TextView) rootView
-				.findViewById(R.id.TextViewController_YourTherapist);
+				.findViewById(R.id.TextViewController_YourTherapist_Spa_Details);
 		AppointmentDate_TextViewController = (TextView) rootView
-				.findViewById(R.id.AppointmentDate_TextViewController);
+				.findViewById(R.id.AppointmentDate_TextViewController_Spa_Details);
 		AppointmentTime_TextViewController = (TextView) rootView
-				.findViewById(R.id.AppointmentTime_TextViewController);
+				.findViewById(R.id.AppointmentTime_TextViewController_Spa_Details);
 		Date_ButtonController = (Button) rootView
-				.findViewById(R.id.Date_ButtonController);
+				.findViewById(R.id.Date_ButtonController_Spa_Details);
 		ButtonController_ChooseTherapist = (Button) rootView
-				.findViewById(R.id.ButtonController_ChooseTherapist);
+				.findViewById(R.id.ButtonController_ChooseTherapist_Spa_Details);
 		Time_ButtonController = (Button) rootView
-				.findViewById(R.id.Time_ButtonController);
+				.findViewById(R.id.Time_ButtonController_Spa_Details);
 		MakeAppointment_ButtonController = (Button) rootView
 				.findViewById(R.id.MakeAppointment_ButtonController);
+		
 		new GetAllSpa().execute();
 
 		cal = Calendar.getInstance();
@@ -827,11 +828,14 @@ public class MakeAppointmentFragment extends Fragment {
 		protected void onPostExecute(String file_url) {
 			// dismiss the dialog once product deleted
 			pDialog.dismiss();
+			
+			
 			if (file_url != null) {
 				Toast.makeText(getActivity(), file_url, Toast.LENGTH_LONG)
 						.show();
 			}
 
+			
 		}
 
 	}
